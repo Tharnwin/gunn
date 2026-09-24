@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CYBER STRIKE - Multiplayer Web Shooter | เกมยิงปืนออนไลน์</title>
+  <meta name="description" content="เกมยิงปืนออนไลน์บนเว็บ เล่นกับเพื่อนได้ เปิดไมค์คุยกันได้ มีหลายเซิร์ฟเวอร์ รองรับมือถือ ล็อกอินด้วย Google พร้อมระบบฐานข้อมูล">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,600;0,700;1,700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Offline / Protocol Info Bar -->
+  <div id="fileProtocolWarning" style="display:none; background:linear-gradient(90deg, #1a237e, #0d47a1); color:#fff; text-align:center; padding:10px 16px; font-weight:600; font-size:0.88rem; position:fixed; top:0; left:0; right:0; z-index:999999; box-shadow:0 4px 15px rgba(0,0,0,0.5);">
+    <span>💡 คุณกำลังเล่นในโหมด Standalone (เล่นกับบอท AI) หากต้องการเชื่อมต่อเซิร์ฟเวอร์เต็มรูปแบบ ให้รันไฟล์ <code>start.bat</code></span>
+    <button onclick="document.getElementById('fileProtocolWarning').style.display='none'" style="margin-left:14px; background:rgba(255,255,255,0.2); border:none; color:#fff; padding:3px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ ปิด</button>
+  </div>
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.getElementById('fileProtocolWarning').style.display = 'block';
+    }
+  </script>
+
+  <!-- ==================== FIRST PAGE: AUTHENTICATION SCREEN (LOGIN / REGISTER / GOOGLE) ==================== -->
+  <div id="authScreen" class="screen-view active">
+    <!-- Cyber Background Grid & Ambient Glow -->
+    <div class="cyber-bg">
+      <div class="grid-overlay"></div>
+      <div class="ambient-glow cyan"></div>
+      <div class="ambient-glow purple"></div>
+    </div>
+
+    <div class="auth-portal-container">
+      <div class="auth-portal-card">
+        <!-- Logo & Title -->
+        <div class="portal-brand">
+          <i class="fa-solid fa-crosshairs brand-portal-icon"></i>
+          <h1 class="portal-title">CYBER STRIKE</h1>
+          <p class="portal-subtitle">TACTICAL ARENA MULTIPLAYER SHOOTER</p>
+          <div class="portal-tags">
+            <span><i class="fa-solid fa-gamepad cyan"></i> เล่นกับเพื่อน</span>
+            <span><i class="fa-solid fa-microphone-lines gold"></i> เปิดไมค์ได้</span>
+            <span><i class="fa-solid fa-mobile-screen cyan"></i> รองรับมือถือ</span>
+            <span><i class="fa-solid fa-database" style="color:var(--secondary);"></i> ฐานข้อมูลสถิติ</span>
+          </div>
+        </div>
+
+        <!-- Google Login Primary Action -->
+        <div class="google-auth-section">
+          <button id="btnAuthGoogle" class="btn-cyber google-btn-large">
+            <i class="fa-brands fa-google"></i>
+            <span>เข้าสู่ระบบทันทีด้วย Google (Google Sign-In)</span>
+          </button>
+        </div>
+
+        <div class="divider-text">
+          <span>หรือเข้าสู่ระบบด้วยบัญชีเกม / สมัครใหม่</span>
+        </div>
+
+        <!-- Auth Tabs (Login vs Register) -->
+        <div class="auth-tabs">
+          <button id="tabBtnLogin" class="auth-tab active" type="button">เข้าสู่ระบบ (Login)</button>
+          <button id="tabBtnRegister" class="auth-tab" type="button">สมัครสมาชิก (Register)</button>
+        </div>
+
+        <!-- Form: Login -->
+        <form id="formLogin" class="auth-form-body active">
+          <div id="loginAlert" class="auth-alert hidden"></div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-user"></i> ชื่อผู้ใช้ หรือ อีเมล:</label>
+            <input type="text" id="loginUsername" class="cyber-input" placeholder="ใส่ Username หรือ Email" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-lock"></i> รหัสผ่าน:</label>
+            <input type="password" id="loginPassword" class="cyber-input" placeholder="ใส่รหัสผ่านของคุณ" required>
+          </div>
+          <button type="submit" class="btn-cyber primary-btn w-100 mt-2">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>เข้าสู่ระบบ (LOGIN)</span>
+          </button>
+        </form>
+
+        <!-- Form: Register -->
+        <form id="formRegister" class="auth-form-body">
+          <div id="registerAlert" class="auth-alert hidden"></div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-at"></i> ชื่อผู้ใช้ (Username):</label>
+            <input type="text" id="regUsername" class="cyber-input" placeholder="ภาษาอังกฤษหรือตัวเลข เช่น striker99" required maxlength="18">
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-signature"></i> ชื่อที่จะแสดงในเกม (Display Name):</label>
+            <input type="text" id="regDisplayName" class="cyber-input" placeholder="เช่น นักรบเงา, Shadow Hunter" required maxlength="20">
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-envelope"></i> อีเมล (Email):</label>
+            <input type="email" id="regEmail" class="cyber-input" placeholder="yourname@gmail.com">
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-lock"></i> รหัสผ่าน (Password):</label>
+            <input type="password" id="regPassword" class="cyber-input" placeholder="อย่างน้อย 4 ตัวอักษร" required minlength="4">
+          </div>
+          <button type="submit" class="btn-cyber create-btn w-100 mt-2">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>สร้างบัญชีและเริ่มเล่น (REGISTER)</span>
+          </button>
+        </form>
+
+        <!-- Guest / Instant Play Option -->
+        <div class="portal-footer">
+          <button id="btnAuthGuest" class="btn-guest-link" type="button">
+            <i class="fa-solid fa-user-ninja"></i> ทดลองเล่นทันทีโดยไม่ต้องสมัคร (Guest Mode)
+          </button>
+          <div class="db-stats-badge">
+            <i class="fa-solid fa-server pulse-green-dot"></i>
+            <span id="registeredUsersCount">เชื่อมต่อฐานข้อมูลผู้เล่นเรียบร้อย</span>
+          </div>
+          <button type="button" class="btn-cyber outline-btn btn-open-admin" style="padding: 6px 14px; font-size: 0.78rem; margin-top: 6px; cursor: pointer;">
+            <i class="fa-solid fa-shield-halved"></i> แผงแอดมินดูรายชื่อและ Export Excel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LOBBY & MENU SCREEN ==================== -->
+  <div id="lobbyScreen" class="screen-view">
+    <!-- Cyber Background Grid & Ambient Glow -->
+    <div class="cyber-bg">
+      <div class="grid-overlay"></div>
+      <div class="ambient-glow cyan"></div>
+      <div class="ambient-glow purple"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="lobby-header">
+      <div class="brand">
+        <i class="fa-solid fa-crosshairs brand-icon"></i>
+        <div class="brand-text">
+          <span class="title">CYBER STRIKE</span>
+          <span class="subtitle">TACTICAL ARENA MULTIPLAYER</span>
+        </div>
+      </div>
+
+      <!-- User Profile / Auth Area -->
+      <div class="user-auth-bar">
+        <div id="authLoggedOut" class="auth-box">
+          <button id="btnGoogleLogin" class="btn-cyber google-btn">
+            <i class="fa-brands fa-google"></i>
+            <span>เข้าสู่ระบบด้วย Google</span>
+          </button>
+          <button id="btnGuestLogin" class="btn-cyber secondary-btn">
+            <i class="fa-solid fa-user-ninja"></i>
+            <span>เล่นทันที (Guest)</span>
+          </button>
+        </div>
+
+        <div id="authLoggedIn" class="auth-box user-badge hidden">
+          <img id="userAvatar" src="" alt="Avatar" class="avatar-img">
+          <div class="user-info">
+            <div class="user-top-line">
+              <span id="userName" class="user-name">Player</span>
+              <span id="userLevelBadge" class="level-badge">LVL 1</span>
+            </div>
+            <div class="user-sub-line">
+              <span id="userCoins"><i class="fa-solid fa-coins gold"></i> 500</span>
+              <span id="userKD"><i class="fa-solid fa-skull"></i> K/D: 0.0</span>
+            </div>
+          </div>
+          <button id="btnProfileEdit" class="icon-btn" title="แก้ไขโปรไฟล์">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          <button id="btnLogout" class="icon-btn" title="ออกจากระบบ">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Lobby Container -->
+    <main class="lobby-main">
+      <!-- Left Panel: Quick Play & Character Customizer -->
+      <section class="panel-left">
+        <div class="character-preview-card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-shield-halved"></i> นักรบของคุณ</h3>
+            <span class="status-online"><span class="pulse-dot"></span> พร้อมรบ</span>
+          </div>
+
+          <div class="character-viewport">
+            <canvas id="characterPreviewCanvas" width="220" height="220"></canvas>
+          </div>
+
+          <div class="customizer-controls">
+            <label>สีชุดเกราะไซเบอร์:</label>
+            <div class="color-picker-row">
+              <button class="color-btn active" data-color="#00e5ff" style="background:#00e5ff;"></button>
+              <button class="color-btn" data-color="#ff007f" style="background:#ff007f;"></button>
+              <button class="color-btn" data-color="#ffd600" style="background:#ffd600;"></button>
+              <button class="color-btn" data-color="#00e676" style="background:#00e676;"></button>
+              <button class="color-btn" data-color="#7c4dff" style="background:#7c4dff;"></button>
+              <button class="color-btn" data-color="#ff3d00" style="background:#ff3d00;"></button>
+            </div>
+
+            <div class="form-group mt-3">
+              <label><i class="fa-solid fa-gun"></i> อาวุธเริ่มต้น:</label>
+              <select id="selectFavoriteWeapon" class="cyber-select">
+                <option value="rifle">Assault Rifle (ปืนกลจู่โจม)</option>
+                <option value="shotgun">Pump Shotgun (ลูกซองพลังสูง)</option>
+                <option value="sniper">Sniper Rifle (สไนเปอร์ระยะไกล)</option>
+                <option value="rocket">Rocket Launcher (เครื่องยิงจรวด)</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="btnQuickPlay" class="btn-cyber btn-play-large">
+            <i class="fa-solid fa-play"></i>
+            <span>เข้าเล่นด่วน (QUICK PLAY)</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Center & Right Panel: Server Browser & Features -->
+      <section class="panel-right">
+        <!-- Top Nav Tabs -->
+        <div class="nav-tabs">
+          <button class="tab-btn active" data-tab="servers"><i class="fa-solid fa-server"></i> เซิร์ฟเวอร์และห้องเล่น</button>
+          <button class="tab-btn" data-tab="leaderboard"><i class="fa-solid fa-trophy"></i> กระดานผู้นำ (Leaderboard)</button>
+          <button class="tab-btn" data-tab="voiceGuide"><i class="fa-solid fa-microphone-lines"></i> ระบบเปิดไมค์ (Voice Chat)</button>
+          <button class="tab-btn" data-tab="mobileGuide"><i class="fa-solid fa-mobile-screen"></i> วิธีเล่นบนมือถือ</button>
+        </div>
+
+        <!-- TAB 1: Servers List -->
+        <div id="tab-servers" class="tab-content active">
+          <div class="server-toolbar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="serverSearchInput" placeholder="ค้นหาห้องหรือเซิร์ฟเวอร์...">
+            </div>
+            <button id="btnRefreshServers" class="btn-cyber outline-btn">
+              <i class="fa-solid fa-rotate"></i> รีเฟรช
+            </button>
+            <button id="btnOpenCreateRoom" class="btn-cyber create-btn">
+              <i class="fa-solid fa-plus"></i> สร้างห้องส่วนตัว
+            </button>
+          </div>
+
+          <div class="server-list-container">
+            <div id="serverListGrid" class="server-grid">
+              <!-- Dynamically populated servers -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Leaderboard -->
+        <div id="tab-leaderboard" class="tab-content">
+          <div class="leaderboard-header">
+            <h3><i class="fa-solid fa-ranking-star gold"></i> อันดับผู้เล่นยอดฝีมือ (TOP PLAYERS)</h3>
+            <span class="subtext">จัดอันดับจากสถิติ Kill & K/D Ratio ในฐานข้อมูล</span>
+          </div>
+          <div class="table-responsive">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th>อันดับ</th>
+                  <th>ผู้เล่น</th>
+                  <th>เลเวล</th>
+                  <th>Kills</th>
+                  <th>Deaths</th>
+                  <th>K/D</th>
+                  <th>ชนะ</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: Voice Chat Info -->
+        <div id="tab-voiceGuide" class="tab-content">
+          <div class="guide-box">
+            <h3><i class="fa-solid fa-microphone-lines cyan"></i> ระบบเปิดไมค์พูดคุยแบบ Real-time (WebRTC Voice Chat)</h3>
+            <p>ระบบสื่อสารด้วยเสียงความเร็วสูง ไม่ต้องลงโปรแกรมเพิ่ม คุยกับเพื่อนในห้องได้ทันทีผ่าน Browser</p>
+            <div class="features-list">
+              <div class="f-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                  <strong>อนุญาตการเข้าถึงไมค์:</strong> เมื่อเข้าสู่ห้องเล่น กดปุ่มรูปไมค์เพื่อเปิดเสียง หรือระบบจะขออนุญาต Microphone
+                </div>
+              </div>
+              <div class="f-item">
+                <i class="fa-solid fa-volume-high"></i>
+                <div>
+                  <strong>Speaking Wave Indicator:</strong> มีวงแหวนแสงและสัญลักษณ์บอกระดับเสียงเวลาเพื่อนหรือตัวคุณพูด
+                </div>
+              </div>
+              <div class="f-item">
+                <i class="fa-solid fa-toggle-on"></i>
+                <div>
+                  <strong>เปิด/ปิดไมค์ได้ตลอดเวลา:</strong> กดปุ่ม 'M' บนคีย์บอร์ด หรือแตะปุ่มไมค์บนหน้าจอมือถือเพื่อ Mute/Unmute
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Mobile Controls Guide -->
+        <div id="tab-mobileGuide" class="tab-content">
+          <div class="guide-box">
+            <h3><i class="fa-solid fa-gamepad cyan"></i> การควบคุมบนโทรศัพท์มือถือและแท็บเล็ต</h3>
+            <div class="mobile-layout-preview">
+              <div class="ctrl-card">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                <h4>อนาล็อกฝั่งซ้าย (Left Stick)</h4>
+                <p>ลากนิ้วเพื่อเคลื่อนที่ตัวละคร 360 องศา พร้อมปุ่ม Dash เร่งความเร็ว</p>
+              </div>
+              <div class="ctrl-card">
+                <i class="fa-solid fa-crosshairs"></i>
+                <h4>อนาล็อกฝั่งขวา (Right Stick)</h4>
+                <p>เล็งทิศทางปืนและยิงอัตโนมัติเมื่อลากนิ้ว หรือกดปุ่ม Fire สีแดง</p>
+              </div>
+              <div class="ctrl-card">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <h4>ปุ่ม Action สัมผัส</h4>
+                <p>ปุ่ม Reload รีโหลดกระสุน, สลับปืน, เปิดไมค์, และปุ่มขยายเต็มจอ (Fullscreen)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer info -->
+    <footer class="lobby-footer">
+      <div class="status-indicator">
+        <span class="pulse-green"></span>
+        <span id="connectionStatus">เชื่อมต่อเซิร์ฟเวอร์สำเร็จ</span>
+      </div>
+      <div class="footer-tip">
+        <i class="fa-solid fa-lightbulb gold"></i> ทริค: ยิงโดนหัว (Headshot) จะสร้างความเสียหายแรงขึ้น 1.5 - 2 เท่า!
+      </div>
+      <button type="button" class="btn-open-admin" style="background:transparent; border:none; color:var(--text-dim); font-size:0.8rem; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-shield-halved cyan"></i> แผงแอดมิน (Admin & Excel)
+      </button>
+    </footer>
+  </div>
+
+  <!-- ==================== IN-GAME HUD & GAMEPLAY SCREEN ==================== -->
+  <div id="gameScreen" class="screen-view">
+    <!-- Main Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Top In-Game Header / Bar -->
+    <div class="hud-top">
+      <!-- Room Info & Ping -->
+      <div class="hud-room-info">
+        <span id="hudRoomName" class="badge-room">Bangkok Arena</span>
+        <span id="hudPing" class="badge-ping"><i class="fa-solid fa-wifi"></i> 15 ms</span>
+        <button id="btnLeaveGame" class="btn-leave" title="ออกจากเกม">
+          <i class="fa-solid fa-door-open"></i> ออก
+        </button>
+      </div>
+
+      <!-- Match Score & Timer -->
+      <div class="hud-match-tracker">
+        <div class="team-score blue">
+          <span class="label">KILLS</span>
+          <span id="hudMyKills" class="score-num">0</span>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="team-score red">
+          <span class="label">DEATHS</span>
+          <span id="hudMyDeaths" class="score-num">0</span>
+        </div>
+      </div>
+
+      <!-- In-Game Voice Chat Indicator Bar -->
+      <div class="hud-voice-bar">
+        <button id="btnToggleMic" class="mic-toggle-btn active" title="เปิด/ปิดไมค์ (M)">
+          <i class="fa-solid fa-microphone"></i>
+          <span class="mic-status-text">MIC ON</span>
+        </button>
+        <div id="voiceSpeakersList" class="voice-speakers">
+          <!-- Active speakers pills appear here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Killfeed Notifications (Top Right) -->
+    <div id="killfeedContainer" class="hud-killfeed"></div>
+
+    <!-- Floating Damage Numbers Container -->
+    <div id="damageOverlay" class="damage-overlay"></div>
+
+    <!-- Bottom Left: Health, Shield, and Status -->
+    <div class="hud-bottom-left">
+      <div class="hud-avatar-box">
+        <img id="hudPlayerAvatar" src="" alt="Avatar">
+      </div>
+      <div class="hud-bars">
+        <div class="player-name-line">
+          <span id="hudPlayerName">Soldier</span>
+          <span id="hudDamageBoost" class="badge-boost hidden">QUAD DAMAGE 2.5X</span>
+        </div>
+        <!-- Health Bar -->
+        <div class="bar-wrap health">
+          <div class="bar-fill" id="hudHealthBar" style="width: 100%;"></div>
+          <span class="bar-text" id="hudHealthText">100 / 100</span>
+        </div>
+        <!-- Shield Bar -->
+        <div class="bar-wrap shield">
+          <div class="bar-fill" id="hudShieldBar" style="width: 50%;"></div>
+          <span class="bar-text" id="hudShieldText">50 / 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Right: Weapon & Ammo Display -->
+    <div class="hud-bottom-right">
+      <div class="weapon-hud-card">
+        <div class="weapon-icon-wrap">
+          <i id="hudWeaponIcon" class="fa-solid fa-gun"></i>
+        </div>
+        <div class="ammo-info">
+          <div class="weapon-name" id="hudWeaponName">Assault Rifle</div>
+          <div class="ammo-numbers">
+            <span id="hudCurrentAmmo" class="ammo-current">30</span>
+            <span class="ammo-slash">/</span>
+            <span id="hudMaxAmmo" class="ammo-max">30</span>
+          </div>
+        </div>
+      </div>
+      <!-- Quick Weapon Switcher Buttons -->
+      <div class="quick-weapon-switch">
+        <button class="w-btn active" data-weapon="rifle" title="ปุ่ม 1: Assault Rifle">1</button>
+        <button class="w-btn" data-weapon="shotgun" title="ปุ่ม 2: Shotgun">2</button>
+        <button class="w-btn" data-weapon="sniper" title="ปุ่ม 3: Sniper Rifle">3</button>
+        <button class="w-btn" data-weapon="rocket" title="ปุ่ม 4: Rocket Launcher">4</button>
+      </div>
+    </div>
+
+    <!-- Minimap (Top Left or Corner) -->
+    <div class="hud-minimap-box">
+      <canvas id="minimapCanvas" width="140" height="100"></canvas>
+    </div>
+
+    <!-- In-Game Chat Box (Bottom Left Floating) -->
+    <div id="gameChatBox" class="hud-chat-box">
+      <div id="chatMessagesList" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="พิมพ์ข้อความคุยกับห้อง... (Enter)" maxlength="80">
+        <button id="btnSendChat" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== MOBILE TOUCH CONTROLS OVERLAY ==================== -->
+    <div id="mobileControlsOverlay" class="mobile-overlay">
+      <!-- Left Virtual Joystick Zone (Movement) -->
+      <div id="leftJoystickZone" class="joystick-zone left">
+        <div id="leftJoystickBase" class="joystick-base">
+          <div id="leftJoystickStick" class="joystick-stick"></div>
+        </div>
+      </div>
+
+      <!-- Right Virtual Joystick / Aim Zone -->
+      <div id="rightJoystickZone" class="joystick-zone right">
+        <div id="rightJoystickBase" class="joystick-base">
+          <div id="rightJoystickStick" class="joystick-stick"></div>
+        </div>
+      </div>
+
+      <!-- Mobile Touch Action Buttons -->
+      <div class="mobile-action-buttons">
+        <button id="btnMobileFire" class="touch-btn fire-btn">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>FIRE</span>
+        </button>
+        <button id="btnMobileDash" class="touch-btn dash-btn">
+          <i class="fa-solid fa-bolt"></i>
+          <span>DASH</span>
+        </button>
+        <button id="btnMobileReload" class="touch-btn reload-btn">
+          <i class="fa-solid fa-rotate"></i>
+          <span>RELOAD</span>
+        </button>
+        <button id="btnMobileNextWeapon" class="touch-btn weapon-btn">
+          <i class="fa-solid fa-gun"></i>
+          <span>GUN</span>
+        </button>
+        <button id="btnMobileMic" class="touch-btn mic-btn">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+        <button id="btnMobileFullscreen" class="touch-btn fs-btn">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Respawn Overlay -->
+    <div id="respawnOverlay" class="respawn-overlay hidden">
+      <div class="respawn-card">
+        <div class="respawn-skull"><i class="fa-solid fa-skull"></i></div>
+        <h2>คุณถูกกำจัด!</h2>
+        <p id="respawnKilledBy">ถูกยิงโดย ...</p>
+        <div class="countdown-circle">
+          <span id="respawnCountdown">3</span>
+        </div>
+        <p class="sub">กำลังเกิดใหม่ในสนามรบ...</p>
+      </div>
+    </div>
+
+    <!-- Scoreboard Overlay (Tab) -->
+    <div id="scoreboardOverlay" class="scoreboard-overlay hidden">
+      <div class="scoreboard-card">
+        <div class="sb-header">
+          <h3><i class="fa-solid fa-table-list"></i> ตารางคะแนนผู้เล่นในห้อง</h3>
+          <span class="sb-close">&times;</span>
+        </div>
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ผู้เล่น</th>
+              <th>Kills</th>
+              <th>Deaths</th>
+              <th>Headshots</th>
+              <th>Score</th>
+              <th>Ping</th>
+            </tr>
+          </thead>
+          <tbody id="scoreboardBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Create Room Modal -->
+  <div id="createRoomModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle cyan"></i> สร้างห้องส่วนตัว (Create Custom Room)</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <form id="createRoomForm" class="modal-body">
+        <div class="form-group">
+          <label>ชื่อห้อง:</label>
+          <input type="text" id="newRoomName" class="cyber-input" placeholder="ตัวอย่าง: ห้องยิงเดือดกับเพื่อน" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label>ภูมิภาค / เซิร์ฟเวอร์:</label>
+            <select id="newRoomRegion" class="cyber-select">
+              <option value="Asia (Bangkok)">🇹🇭 Asia (Bangkok - 15ms)</option>
+              <option value="Asia (Tokyo)">🇯🇵 Asia (Tokyo - 45ms)</option>
+              <option value="Europe (Frankfurt)">🇪🇺 Europe (Frankfurt - 140ms)</option>
+              <option value="US West">🇺🇸 US West (California - 180ms)</option>
+            </select>
+          </div>
+          <div class="form-group col">
+            <label>แผนที่ (Map):</label>
+            <select id="newRoomMap" class="cyber-select">
+              <option value="cyber_arena">Cyber Arena (เวทีคลาสสิก)</option>
+              <option value="neon_city">Neon District (เมืองนีออน)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label>โหมดเกม:</label>
+            <select id="newRoomMode" class="cyber-select">
+              <option value="Free For All">Free For All (ตะลุมบอน)</option>
+              <option value="Team Deathmatch">Team Deathmatch (แบ่งทีม)</option>
+            </select>
+          </div>
+          <div class="form-group col">
+            <label>จำนวนผู้เล่นสูงสุด:</label>
+            <select id="newRoomMaxPlayers" class="cyber-select">
+              <option value="6">6 ผู้เล่น</option>
+              <option value="8" selected>8 ผู้เล่น</option>
+              <option value="12">12 ผู้เล่น</option>
+              <option value="16">16 ผู้เล่น</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>รหัสผ่านเข้าห้อง (ไม่บังคับ):</label>
+          <input type="password" id="newRoomPassword" class="cyber-input" placeholder="เว้นว่างถ้าต้องการเปิดสาธารณะ">
+        </div>
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="newRoomBots" checked>
+            <span>เติมบอทอัตโนมัติหากผู้เล่นไม่ครบ</span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cyber secondary-btn modal-cancel">ยกเลิก</button>
+          <button type="submit" class="btn-cyber primary-btn">สร้างห้องแล้วเข้าเล่น</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div id="profileModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-id-card cyan"></i> โปรไฟล์และข้อมูลนักรบ</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-stats-grid">
+          <div class="stat-pill"><span class="title">KILLS</span><span id="profKills" class="val">0</span></div>
+          <div class="stat-pill"><span class="title">DEATHS</span><span id="profDeaths" class="val">0</span></div>
+          <div class="stat-pill"><span class="title">K/D</span><span id="profKD" class="val">0.00</span></div>
+          <div class="stat-pill"><span class="title">HEADSHOTS</span><span id="profHeadshots" class="val">0</span></div>
+          <div class="stat-pill"><span class="title">WINS</span><span id="profWins" class="val">0</span></div>
+          <div class="stat-pill"><span class="title">MATCHES</span><span id="profMatches" class="val">0</span></div>
+        </div>
+        <div class="form-group mt-3">
+          <label>ชื่อตัวละครของคุณ:</label>
+          <input type="text" id="inputProfileName" class="cyber-input" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>เลือกรูป Avatar:</label>
+          <div class="avatar-selection-row" id="avatarPicker">
+            <!-- Dynamically populated avatar options -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnSaveProfile" class="btn-cyber primary-btn">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN DASHBOARD MODAL (SINGLE LINK / EMBEDDED) ==================== -->
+  <div id="adminModal" class="modal-backdrop hidden">
+    <!-- Admin Security / PIN Form -->
+    <div id="adminAuthBox" class="modal-card" style="max-width: 420px; text-align: center; padding: 30px;">
+      <i class="fa-solid fa-user-shield" style="font-size: 3rem; color: var(--primary); margin-bottom: 12px;"></i>
+      <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 6px;">ระบบแอดมิน (Admin Console)</h3>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 18px;">กรุณากรอกรหัสผ่านผู้ดูแลระบบ (รหัสเริ่มต้น: <code>admin1234</code>)</p>
+      <form id="modalAdminLoginForm">
+        <input type="password" id="modalAdminPasswordInput" class="cyber-input" placeholder="ใส่รหัสผ่านแอดมิน" style="text-align: center; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 16px;" autofocus required>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn-cyber secondary-btn w-100 modal-close-admin">ยกเลิก</button>
+          <button type="submit" class="btn-cyber primary-btn w-100"><i class="fa-solid fa-key"></i> ยืนยัน</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Admin Content View -->
+    <div id="adminContentBox" class="modal-card hidden" style="max-width: 1200px; width: 95vw; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-shield-halved cyan"></i> แผงควบคุมแอดมิน (Admin & Excel Manager)</h3>
+        <button class="modal-close-btn modal-close-admin">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- KPI Cards -->
+        <div class="kpi-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:16px;">
+          <div class="stat-pill"><span class="title">ผู้เล่นทั้งหมด</span><span id="modalStatTotalUsers" class="val">0</span></div>
+          <div class="stat-pill"><span class="title" style="color:#4285f4;"><i class="fa-brands fa-google"></i> Google</span><span id="modalStatGoogleUsers" class="val" style="color:#8ab4f8;">0</span></div>
+          <div class="stat-pill"><span class="title" style="color:#00e676;"><i class="fa-solid fa-user"></i> สมัครผ่านเว็บ</span><span id="modalStatManualUsers" class="val" style="color:#69f0ae;">0</span></div>
+          <div class="stat-pill"><span class="title" style="color:#ffd600;"><i class="fa-solid fa-skull"></i> Kills รวม</span><span id="modalStatTotalKills" class="val" style="color:#ffd600;">0</span></div>
+        </div>
+
+        <!-- Toolbar & Excel Export -->
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; background:rgba(8,12,22,0.7); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.08);">
+          <div class="search-wrap" style="max-width: 320px; flex:1;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="modalAdminSearchInput" placeholder="ค้นหาชื่อ, Username, Email...">
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <select id="modalAdminFilterProvider" class="cyber-select" style="width: 150px;">
+              <option value="all">ทั้งหมด</option>
+              <option value="google">Google</option>
+              <option value="manual">เว็บ (Manual)</option>
+              <option value="guest">Guest</option>
+            </select>
+            <button id="btnRefreshAdmin" class="btn-cyber outline-btn" title="รีเฟรช"><i class="fa-solid fa-rotate"></i></button>
+            <a href="/api/admin/export-csv" class="btn-cyber btn-excel">
+              <i class="fa-solid fa-file-excel"></i> ดาวน์โหลดไฟล์ Excel (.CSV)
+            </a>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>ผู้เล่น</th>
+                <th>ช่องทาง</th>
+                <th>Username</th>
+                <th>อีเมล</th>
+                <th>เลเวล</th>
+                <th>เหรียญ</th>
+                <th>Kills / Deaths</th>
+                <th>K/D</th>
+                <th>ชนะ</th>
+                <th>วันที่สมัคร</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="modalAdminUsersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unified Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

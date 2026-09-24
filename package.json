@@ -1,0 +1,15 @@
+{
+  "name": "cyber-strike-multiplayer",
+  "version": "1.0.0",
+  "description": "Cross-platform Multiplayer Shooter with Voice Chat, Multi-servers, Google Login, and Database",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "cors": "^2.8.5"
+  }
+}

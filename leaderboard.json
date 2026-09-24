@@ -1,0 +1,101 @@
+[
+  {
+    "id": "usr_g_1790260269517_3i8n",
+    "displayName": "ApexStriker_262",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=ApexStriker_262",
+    "level": 4,
+    "kills": 3,
+    "deaths": 2,
+    "wins": 0,
+    "kdRatio": 1.5,
+    "matchesPlayed": 5
+  },
+  {
+    "id": "guest_1790259850873",
+    "displayName": "Striker_5459",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=guest_1790259850873",
+    "level": 4,
+    "kills": 3,
+    "deaths": 4,
+    "wins": 0,
+    "kdRatio": 0.75,
+    "matchesPlayed": 7
+  },
+  {
+    "id": "test_g123",
+    "displayName": "Commander_Max",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=Commander_Max",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "guest_1790259964140",
+    "displayName": "Striker_6401",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=guest_1790259964140",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "google_dGl0YW52NDkyQG",
+    "displayName": "TitanV_492",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=TitanV_492",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "usr_1790260180876_qukg",
+    "displayName": "??????????",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=cybersoldier",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "usr_g_1790260218899_a99m",
+    "displayName": "Vortex_984",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=Vortex_984",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "usr_g_1790260548713_4yh4",
+    "displayName": "TitanV_558",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=TitanV_558",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  },
+  {
+    "id": "usr_g_1790260592497_cu71",
+    "displayName": "999999999999999",
+    "photoURL": "https://api.dicebear.com/7.x/bottts/svg?seed=999999999999999",
+    "level": 1,
+    "kills": 0,
+    "deaths": 0,
+    "wins": 0,
+    "kdRatio": 0,
+    "matchesPlayed": 0
+  }
+]
