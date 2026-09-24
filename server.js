@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const { Server } = require('socket.io');
@@ -21,10 +22,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 
+// Explicit root route for index.html
+app.get('/', (req, res) => {
+  const candidates = [
+    path.join(__dirname, 'index.html'),
+    path.join(__dirname, 'public', 'index.html'),
+    path.join(__dirname, '..', 'public', 'index.html'),
+    path.join(__dirname, '..', 'index.html')
+  ];
+  for (const f of candidates) {
+    if (fs.existsSync(f)) return res.sendFile(f);
+  }
+  res.send('Cyber Strike Server is Live!');
+});
 
 // ==================== REST APIS ====================
 
